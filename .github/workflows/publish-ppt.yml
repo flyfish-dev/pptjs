@@ -4,6 +4,11 @@ on:
     tags: ['v[0-9]*']
   workflow_dispatch:
     inputs:
+      candidate_tag:
+        description: Immutable artifact tag for a publication-only retry
+        type: string
+        default: v1.0.1
+        required: true
       dry_run:
         description: Verify without publishing
         type: boolean
@@ -55,4 +60,5 @@ jobs:
       - name: Publish only the frozen archive using trusted identity
         env:
           DISTRIBUTION_REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
+          PPT_CANDIDATE_TAG: ${{ inputs.candidate_tag || github.ref_name }}
         run: node scripts/publish-ppt.mjs ${{ inputs.dry_run && '--dry-run' || '' }}

@@ -8,6 +8,18 @@ import {pathToFileURL} from 'node:url';
 
 export const repository='flyfish-dev/pptjs',repositoryId='1439507870';
 const digest=body=>createHash('sha256').update(body).digest('hex');
+export function assertFrozenRefBinding(version,context=process.env,root=process.cwd()){
+ const tag=`v${version}`,git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
+ const head=git('rev-parse','HEAD'),frozen=git('rev-parse',`${tag}^{commit}`);
+ if(context.GITHUB_REF===`refs/tags/${tag}`){assert.equal(head,frozen);assert.equal(context.GITHUB_WORKFLOW_REF,`${repository}/.github/workflows/publish-ppt.yml@refs/tags/${tag}`);}
+ else{
+  assert.equal(context.GITHUB_EVENT_NAME,'workflow_dispatch','Maintenance publication requires explicit dispatch');assert.equal(context.GITHUB_REF,'refs/heads/main');assert.equal(context.PPT_CANDIDATE_TAG,tag,'Dispatched candidate must match the frozen version');assert.equal(context.GITHUB_WORKFLOW_REF,`${repository}/.github/workflows/publish-ppt.yml@refs/heads/main`);
+ }
+ assert.equal(spawnSync('git',['merge-base','--is-ancestor',frozen,head],{cwd:root}).status,0,'Controls must retain the immutable candidate tag');
+ assert.equal(spawnSync('git',['merge-base','--is-ancestor',head,'origin/main'],{cwd:root}).status,0,'Publisher controls must be retained in main');
+ assert.equal(git('diff',tag,'--',`release/file-viewer-ppt-${version}.tgz`,'release/npm-release.json','release/qualification.json','LICENSE','NOTICE.md'),'','Maintenance controls cannot change frozen artifacts or qualification');
+ return {tag,frozenCommit:frozen,controlCommit:head};
+}
 export function verifyArchive(bytes,record){
  assert.equal(bytes.length,record.bytes,'Archive byte count differs');
  assert.equal(digest(bytes),record.sha256,'Archive SHA-256 differs');
