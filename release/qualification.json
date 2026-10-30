@@ -1,0 +1,45 @@
+{
+  "sourceRepositoryPrivate": true,
+  "sourceCommit": "7aeb508af7788b5c64e8c67c9447be226c94e903",
+  "controlCommit": "7aeb508af7788b5c64e8c67c9447be226c94e903",
+  "archiveIntegrity": "sha512-r6bYt7bC+fDL4yICKflfvb/yn9RNY5NB534F/OU343+sC1meHHKHapN86exqtUXqqP5oOEx8uu0IFCgcAj8Qfw==",
+  "runner": "oracle-linux-arm64",
+  "namedTests": 321,
+  "checks": [
+    [
+      "verify",
+      0
+    ],
+    [
+      "test:package",
+      0
+    ],
+    [
+      "test:browser",
+      0
+    ],
+    [
+      "test:consumers",
+      0
+    ],
+    [
+      "audit",
+      0
+    ]
+  ],
+  "finishedAt": "2026-10-30T09:49:08.634Z",
+  "browsers": [
+    {
+      "engine": "chromium",
+      "version": "153.0.8010.12"
+    },
+    {
+      "engine": "webkit",
+      "version": "26.6"
+    }
+  ],
+  "consumers": [
+    "vite",
+    "webpack"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "repository": "flyfish-dev/pptjs",
+  "repositoryId": 1439507870,
+  "workflowFilename": "publish-ppt.yml",
+  "packageName": "@file-viewer/ppt",
+  "sourceRepositoryPrivate": true
+}
