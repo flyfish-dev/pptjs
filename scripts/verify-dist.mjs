@@ -8,6 +8,10 @@ import {pathToFileURL} from 'node:url';
 
 export const repository='flyfish-dev/pptjs',repositoryId='1439507870';
 const digest=body=>createHash('sha256').update(body).digest('hex');
+export async function waitForRegistry(read,{timeoutMs=600000,intervalMs=5000,now=Date.now,pause=ms=>new Promise(resolve=>setTimeout(resolve,ms))}={}){
+ const deadline=now()+timeoutMs;
+ while(true){const value=await read();if(value)return value;const remaining=deadline-now();if(remaining<=0)return null;await pause(Math.min(intervalMs,remaining));}
+}
 export function assertFrozenRefBinding(version,context=process.env,root=process.cwd()){
  const tag=`v${version}`,git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
  const head=git('rev-parse','HEAD'),frozen=git('rev-parse',`${tag}^{commit}`);
